@@ -42,13 +42,20 @@ export async function createComplaint(input: ComplaintInput): Promise<Complaint>
 }
 
 export async function updateComplaint(id: string, patch: ComplaintUpdate): Promise<Complaint> {
-  const payload: Record<string, string> = {};
-  if (patch.title !== undefined) payload["title"] = patch.title.trim();
-  if (patch.category !== undefined) payload["category"] = patch.category;
-  if (patch.location !== undefined) payload["location"] = patch.location.trim();
-  if (patch.description !== undefined) payload["description"] = patch.description.trim();
-  if (patch.priority !== undefined) payload["priority"] = patch.priority;
-  if (patch.status !== undefined) payload["status"] = patch.status;
+  const payload: {
+    title?: string;
+    category?: string;
+    location?: string;
+    description?: string;
+    priority?: string;
+    status?: string;
+  } = {};
+  if (patch.title !== undefined) payload.title = patch.title.trim();
+  if (patch.category !== undefined) payload.category = patch.category;
+  if (patch.location !== undefined) payload.location = patch.location.trim();
+  if (patch.description !== undefined) payload.description = patch.description.trim();
+  if (patch.priority !== undefined) payload.priority = patch.priority;
+  if (patch.status !== undefined) payload.status = patch.status;
 
   const { data, error } = await supabase
     .from("complaints")
