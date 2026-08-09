@@ -156,7 +156,7 @@ function DashboardPage() {
           ) : (
             <>
               <ComplaintTable complaints={recent} />
-              <div className="grid gap-3 md:hidden">
+              <div className="grid gap-3 lg:hidden">
                 {recent.map((complaint) => (
                   <ComplaintCard key={complaint.id} complaint={complaint} />
                 ))}

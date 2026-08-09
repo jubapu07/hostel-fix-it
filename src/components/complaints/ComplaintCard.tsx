@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { MapPin, Tag } from "lucide-react";
 
 import { StatusBadge } from "@/components/complaints/StatusBadge";
+import { PriorityBadge } from "@/components/complaints/PriorityBadge";
 import { formatDate } from "@/lib/format";
 import type { Complaint } from "@/types/complaint";
 
@@ -17,6 +18,9 @@ export function ComplaintCard({ complaint }: { complaint: Complaint }) {
         <StatusBadge status={complaint.status} />
       </div>
       <p className="mt-1.5 line-clamp-2 text-sm text-muted-foreground">{complaint.description}</p>
+      <div className="mt-3">
+        <PriorityBadge priority={complaint.priority} />
+      </div>
       <dl className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <dt className="sr-only">Category</dt>

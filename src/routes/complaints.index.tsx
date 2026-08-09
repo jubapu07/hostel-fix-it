@@ -44,6 +44,13 @@ function ComplaintsPage() {
     () => filterComplaints(complaints ?? [], filters),
     [complaints, filters],
   );
+  const hasActiveFilters =
+    filters.search.trim() !== "" ||
+    filters.status !== "All" ||
+    filters.category !== "All" ||
+    filters.location !== "All" ||
+    filters.priority !== "All" ||
+    filters.sort !== "newest";
 
   return (
     <AppShell>
@@ -76,12 +83,25 @@ function ComplaintsPage() {
           <LoadingState label="Loading complaints..." />
         ) : isError ? (
           <ErrorState message={(error as Error).message} onRetry={() => void refetch()} />
+        ) : complaints?.length === 0 ? (
+          <div className="rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
+            <EmptyState
+              icon={SearchX}
+              title="No complaints yet"
+              description="Submit your first complaint to start tracking hostel issues."
+              action={
+                <Button asChild>
+                  <Link to="/submit">Submit Your First Complaint</Link>
+                </Button>
+              }
+            />
+          </div>
         ) : visible.length === 0 ? (
           <div className="rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
             <EmptyState
               icon={SearchX}
-              title="No complaints found"
-              description="Try changing your filters or submit a new complaint."
+              title="No complaints match your filters"
+              description="Try changing your search or filters to find a complaint."
               action={
                 <Button variant="outline" onClick={() => setFilters(defaultFilters)}>
                   Clear filters
@@ -91,11 +111,16 @@ function ComplaintsPage() {
           </div>
         ) : (
           <>
-            <p className="mb-3 text-xs text-muted-foreground" aria-live="polite">
-              Showing {visible.length} of {complaints?.length ?? 0} complaints
-            </p>
+            <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground" aria-live="polite">
+              <span>Showing {visible.length} of {complaints?.length ?? 0} complaints</span>
+              {hasActiveFilters ? (
+                <span className="rounded-full bg-secondary px-2 py-0.5 font-medium text-secondary-foreground">
+                  Filters active
+                </span>
+              ) : null}
+            </div>
             <ComplaintTable complaints={visible} />
-            <div className="grid gap-3 md:hidden">
+            <div className="grid gap-3 lg:hidden">
               {visible.map((complaint) => (
                 <ComplaintCard key={complaint.id} complaint={complaint} />
               ))}

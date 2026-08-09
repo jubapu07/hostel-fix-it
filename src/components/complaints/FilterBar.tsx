@@ -10,14 +10,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CATEGORIES, STATUSES } from "@/types/complaint";
+import { CATEGORIES, PRIORITIES, STATUSES } from "@/types/complaint";
 
 export interface Filters {
   search: string;
   status: string;
   category: string;
   location: string;
-  sort: "newest" | "oldest";
+  priority: string;
+  sort: "newest" | "oldest" | "priority";
 }
 
 export const defaultFilters: Filters = {
@@ -25,6 +26,7 @@ export const defaultFilters: Filters = {
   status: "All",
   category: "All",
   location: "All",
+  priority: "All",
   sort: "newest",
 };
 
@@ -44,6 +46,7 @@ export function FilterBar({
     filters.status !== "All" ||
     filters.category !== "All" ||
     filters.location !== "All" ||
+    filters.priority !== "All" ||
     filters.sort !== "newest";
 
   return (
@@ -61,12 +64,12 @@ export function FilterBar({
           type="search"
           value={filters.search}
           onChange={(event) => onChange({ ...filters, search: event.target.value })}
-          placeholder="Search complaints..."
+          placeholder="Search complaints, locations, or descriptions..."
           className="pl-9"
         />
       </div>
 
-      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <div className="space-y-1.5">
           <Label htmlFor="filter-status" className="text-xs text-muted-foreground">
             Status
@@ -83,6 +86,28 @@ export function FilterBar({
               {STATUSES.map((status) => (
                 <SelectItem key={status} value={status}>
                   {status}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="filter-priority" className="text-xs text-muted-foreground">
+            Priority
+          </Label>
+          <Select
+            value={filters.priority}
+            onValueChange={(value) => onChange({ ...filters, priority: value })}
+          >
+            <SelectTrigger id="filter-priority" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All">All priorities</SelectItem>
+              {PRIORITIES.map((priority) => (
+                <SelectItem key={priority} value={priority}>
+                  {priority} priority
                 </SelectItem>
               ))}
             </SelectContent>
@@ -147,6 +172,7 @@ export function FilterBar({
             <SelectContent>
               <SelectItem value="newest">Newest first</SelectItem>
               <SelectItem value="oldest">Oldest first</SelectItem>
+              <SelectItem value="priority">Highest priority</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -171,6 +197,7 @@ export function filterComplaints<
     location: string;
     category: string;
     status: string;
+    priority: string;
     created_at: string;
   },
 >(complaints: T[], filters: Filters): T[] {
@@ -185,11 +212,18 @@ export function filterComplaints<
     const matchesStatus = filters.status === "All" || complaint.status === filters.status;
     const matchesCategory = filters.category === "All" || complaint.category === filters.category;
     const matchesLocation = filters.location === "All" || complaint.location === filters.location;
-    return matchesSearch && matchesStatus && matchesCategory && matchesLocation;
+    const matchesPriority = filters.priority === "All" || complaint.priority === filters.priority;
+    return matchesSearch && matchesStatus && matchesCategory && matchesLocation && matchesPriority;
   });
 
   return result.sort((a, b) => {
+    if (filters.sort === "priority") {
+      const priorityRank = (priority: string) =>
+        priority === "High" ? 3 : priority === "Medium" ? 2 : 1;
+      const priorityDiff = priorityRank(b.priority) - priorityRank(a.priority);
+      if (priorityDiff !== 0) return priorityDiff;
+    }
     const diff = new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    return filters.sort === "newest" ? diff : -diff;
+    return filters.sort === "oldest" ? -diff : diff;
   });
 }

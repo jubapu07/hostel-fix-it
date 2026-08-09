@@ -6,6 +6,13 @@ function friendly(action: string): string {
   return `We couldn't ${action} right now. Please check your connection and try again.`;
 }
 
+function updateErrorMessage(error: { code?: string; message?: string } | null): string {
+  if (error?.code === "P0001" && error.message?.startsWith("invalid complaint status transition")) {
+    return "This complaint can only move to the next stage in its lifecycle.";
+  }
+  return friendly("save your changes");
+}
+
 export async function fetchComplaints(): Promise<Complaint[]> {
   const { data, error } = await supabase
     .from("complaints")
@@ -64,6 +71,6 @@ export async function updateComplaint(id: string, patch: ComplaintUpdate): Promi
     .select()
     .single();
 
-  if (error || !data) throw new Error(friendly("save your changes"));
+  if (error || !data) throw new Error(updateErrorMessage(error));
   return data as Complaint;
 }

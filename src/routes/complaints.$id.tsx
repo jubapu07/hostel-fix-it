@@ -13,16 +13,17 @@ import { LoadingState } from "@/components/common/LoadingState";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useComplaint, useUpdateComplaint } from "@/hooks/use-complaints";
 import { formatDateTime, formatRelative } from "@/lib/format";
-import { STATUSES, type ComplaintStatus } from "@/types/complaint";
 
 export const Route = createFileRoute("/complaints/$id")({
   head: () => ({
@@ -49,6 +50,25 @@ function ComplaintDetailPage() {
   const { data: complaint, isPending, isError, error, refetch } = useComplaint(id);
   const updateComplaint = useUpdateComplaint(id);
   const [isEditing, setIsEditing] = useState(false);
+  const [isResolveDialogOpen, setIsResolveDialogOpen] = useState(false);
+
+  function moveToNextStatus(nextStatus: "In Progress" | "Resolved") {
+    updateComplaint.mutate(
+      { status: nextStatus },
+      {
+        onSuccess: () => {
+          if (nextStatus === "Resolved") setIsResolveDialogOpen(false);
+          toast.success(
+            nextStatus === "In Progress"
+              ? "Complaint moved to In Progress."
+              : "Complaint resolved successfully.",
+          );
+        },
+        onError: (mutationError: Error) =>
+          toast.error("Could not update status", { description: mutationError.message }),
+      },
+    );
+  }
 
   return (
     <AppShell>
@@ -94,7 +114,7 @@ function ComplaintDetailPage() {
                         onSubmit={(values) => {
                           updateComplaint.mutate(values, {
                             onSuccess: () => {
-                              toast.success("Complaint updated");
+                              toast.success("Complaint updated successfully.");
                               setIsEditing(false);
                             },
                             onError: (mutationError: Error) => {
@@ -117,6 +137,9 @@ function ComplaintDetailPage() {
                       </span>
                     </div>
                     <h1 className="mt-3 text-2xl font-bold text-foreground">{complaint.title}</h1>
+                    <p className="mt-1 break-all text-xs text-muted-foreground">
+                      Complaint ID: {complaint.id}
+                    </p>
                     <p className="mt-4 text-sm leading-relaxed whitespace-pre-line text-foreground/90">
                       {complaint.description}
                     </p>
@@ -138,46 +161,55 @@ function ComplaintDetailPage() {
               </div>
             </div>
 
-            <div className="space-y-5">
-              <div className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
-                <Label htmlFor="status-update" className="text-sm font-semibold text-foreground">
-                  Update status
-                </Label>
-                <Select
-                  value={complaint.status}
-                  onValueChange={(value) => {
-                    if (value === complaint.status) return;
-                    updateComplaint.mutate(
-                      { status: value as ComplaintStatus },
-                      {
-                        onSuccess: () => toast.success(`Status changed to ${value}`),
-                        onError: (mutationError: Error) =>
-                          toast.error("Could not update status", {
-                            description: mutationError.message,
-                          }),
-                      },
-                    );
-                  }}
-                >
-                  <SelectTrigger
-                    id="status-update"
-                    className="mt-2 w-full"
-                    disabled={updateComplaint.isPending}
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUSES.map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {status}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Changes are saved immediately and visible to everyone.
-                </p>
-              </div>
+              <div className="space-y-5">
+                <div className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
+                  <h2 className="text-sm font-semibold text-foreground">Update status</h2>
+                  {complaint.status === "Resolved" ? (
+                    <Button className="mt-2 w-full" disabled>
+                      Complaint Resolved
+                    </Button>
+                  ) : complaint.status === "In Progress" ? (
+                    <AlertDialog open={isResolveDialogOpen} onOpenChange={setIsResolveDialogOpen}>
+                      <AlertDialogTrigger asChild>
+                        <Button className="mt-2 w-full" disabled={updateComplaint.isPending}>
+                          Resolve Complaint
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Resolve this complaint?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Once resolved, this complaint cannot be moved back to an earlier stage.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel disabled={updateComplaint.isPending}>Cancel</AlertDialogCancel>
+                          <Button
+                            onClick={() => moveToNextStatus("Resolved")}
+                            disabled={updateComplaint.isPending}
+                          >
+                            {updateComplaint.isPending ? "Resolving..." : "Resolve Complaint"}
+                          </Button>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  ) : (
+                    <Button
+                      className="mt-2 w-full"
+                      disabled={updateComplaint.isPending}
+                      onClick={() => moveToNextStatus("In Progress")}
+                    >
+                      {updateComplaint.isPending ? "Updating..." : "Mark In Progress"}
+                    </Button>
+                  )}
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {complaint.status === "Resolved"
+                      ? "This complaint has completed its lifecycle."
+                      : complaint.status === "In Progress"
+                        ? "Resolve this complaint when the issue has been fixed."
+                        : "The next status is saved immediately and visible to everyone."}
+                  </p>
+                </div>
 
               <dl className="space-y-4 rounded-xl border border-border bg-card p-5 text-sm shadow-[var(--shadow-card)]">
                 <div>

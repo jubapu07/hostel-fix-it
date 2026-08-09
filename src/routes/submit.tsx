@@ -45,8 +45,8 @@ function SubmitPage() {
             onSubmit={(values) => {
               createComplaint.mutate(values, {
                 onSuccess: (complaint) => {
-                  toast.success("Complaint submitted", {
-                    description: "You can track its progress from the complaints list.",
+                  toast.success("Complaint submitted successfully.", {
+                    description: "You can now track its progress.",
                   });
                   void navigate({ to: "/complaints/$id", params: { id: complaint.id } });
                 },

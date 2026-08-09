@@ -184,7 +184,9 @@ export function ComplaintForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="priority">Priority (optional)</Label>
+        <Label htmlFor="priority">
+          Priority <span className="text-destructive">*</span>
+        </Label>
         <Select value={priority} onValueChange={(value) => setPriority(value as Priority)}>
           <SelectTrigger id="priority" className="w-full sm:w-56">
             <SelectValue />

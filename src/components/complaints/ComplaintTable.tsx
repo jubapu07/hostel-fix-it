@@ -2,12 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 
 import { StatusBadge } from "@/components/complaints/StatusBadge";
+import { PriorityBadge } from "@/components/complaints/PriorityBadge";
 import { formatDate } from "@/lib/format";
 import type { Complaint } from "@/types/complaint";
 
 export function ComplaintTable({ complaints }: { complaints: Complaint[] }) {
   return (
-    <div className="hidden overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)] md:block">
+    <div className="hidden overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)] lg:block">
       <table className="w-full border-collapse text-left text-sm">
         <caption className="sr-only">List of hostel complaints</caption>
         <thead>
@@ -20,6 +21,9 @@ export function ComplaintTable({ complaints }: { complaints: Complaint[] }) {
             </th>
             <th scope="col" className="px-5 py-3 font-medium text-muted-foreground">
               Location
+            </th>
+            <th scope="col" className="px-5 py-3 font-medium text-muted-foreground">
+              Priority
             </th>
             <th scope="col" className="px-5 py-3 font-medium text-muted-foreground">
               Status
@@ -54,6 +58,9 @@ export function ComplaintTable({ complaints }: { complaints: Complaint[] }) {
                 {complaint.category}
               </td>
               <td className="px-5 py-4 text-muted-foreground">{complaint.location}</td>
+              <td className="px-5 py-4">
+                <PriorityBadge priority={complaint.priority} />
+              </td>
               <td className="px-5 py-4">
                 <StatusBadge status={complaint.status} />
               </td>
