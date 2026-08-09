@@ -11,8 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
-import { Route as ComplaintsRouteImport } from './routes/complaints'
 import { Route as SubmitRouteImport } from './routes/submit'
+import { Route as ComplaintsIndexRouteImport } from './routes/complaints.index'
 import { Route as ComplaintsIdRouteImport } from './routes/complaints.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -25,58 +25,59 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ComplaintsRoute = ComplaintsRouteImport.update({
-  id: '/complaints',
-  path: '/complaints',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SubmitRoute = SubmitRouteImport.update({
   id: '/submit',
   path: '/submit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComplaintsIndexRoute = ComplaintsIndexRouteImport.update({
+  id: '/complaints/',
+  path: '/complaints/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ComplaintsIdRoute = ComplaintsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => ComplaintsRoute,
+  id: '/complaints/$id',
+  path: '/complaints/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/complaints': typeof ComplaintsRouteWithChildren
   '/submit': typeof SubmitRoute
   '/complaints/$id': typeof ComplaintsIdRoute
+  '/complaints/': typeof ComplaintsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/complaints': typeof ComplaintsRouteWithChildren
   '/submit': typeof SubmitRoute
   '/complaints/$id': typeof ComplaintsIdRoute
+  '/complaints': typeof ComplaintsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/complaints': typeof ComplaintsRouteWithChildren
   '/submit': typeof SubmitRoute
   '/complaints/$id': typeof ComplaintsIdRoute
+  '/complaints/': typeof ComplaintsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/complaints' | '/submit' | '/complaints/$id'
+  fullPaths: '/' | '/about' | '/submit' | '/complaints/$id' | '/complaints/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/complaints' | '/submit' | '/complaints/$id'
+  to: '/' | '/about' | '/submit' | '/complaints/$id' | '/complaints'
   id:
-    '__root__' | '/' | '/about' | '/complaints' | '/submit' | '/complaints/$id'
+    '__root__' | '/' | '/about' | '/submit' | '/complaints/$id' | '/complaints/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  ComplaintsRoute: typeof ComplaintsRouteWithChildren
   SubmitRoute: typeof SubmitRoute
+  ComplaintsIdRoute: typeof ComplaintsIdRoute
+  ComplaintsIndexRoute: typeof ComplaintsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -95,13 +96,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/complaints': {
-      id: '/complaints'
-      path: '/complaints'
-      fullPath: '/complaints'
-      preLoaderRoute: typeof ComplaintsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/submit': {
       id: '/submit'
       path: '/submit'
@@ -109,33 +103,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/complaints/': {
+      id: '/complaints/'
+      path: '/complaints'
+      fullPath: '/complaints/'
+      preLoaderRoute: typeof ComplaintsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/complaints/$id': {
       id: '/complaints/$id'
-      path: '/$id'
+      path: '/complaints/$id'
       fullPath: '/complaints/$id'
       preLoaderRoute: typeof ComplaintsIdRouteImport
-      parentRoute: typeof ComplaintsRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface ComplaintsRouteChildren {
-  ComplaintsIdRoute: typeof ComplaintsIdRoute
-}
-
-const ComplaintsRouteChildren: ComplaintsRouteChildren = {
-  ComplaintsIdRoute: ComplaintsIdRoute,
-}
-
-const ComplaintsRouteWithChildren = ComplaintsRoute._addFileChildren(
-  ComplaintsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  ComplaintsRoute: ComplaintsRouteWithChildren,
   SubmitRoute: SubmitRoute,
+  ComplaintsIdRoute: ComplaintsIdRoute,
+  ComplaintsIndexRoute: ComplaintsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
