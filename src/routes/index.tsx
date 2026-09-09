@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CheckCircle2, CircleDot, ClipboardList, Inbox, Loader, Plus } from "lucide-react";
+import { ArrowRight, CheckCircle2, CircleDot, ClipboardList, Inbox, Loader2, Plus, Sparkles } from "lucide-react";
 
 import { ComplaintCard } from "@/components/complaints/ComplaintCard";
 import { ComplaintTable } from "@/components/complaints/ComplaintTable";
@@ -43,21 +43,35 @@ function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground sm:text-3xl">{greeting()}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Track and manage hostel complaints in one place.
-          </p>
+      {/* Header Banner */}
+      <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-gradient-to-br from-card via-card to-secondary/30 p-6 shadow-[var(--shadow-card)] sm:p-8">
+        <div className="pointer-events-none absolute -top-12 -right-12 size-48 rounded-full bg-primary/10 blur-3xl" />
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+              </span>
+              Hostel Operations Live
+            </div>
+            <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+              {greeting()}
+            </h1>
+            <p className="mt-1.5 text-sm text-muted-foreground sm:text-base">
+              Track and resolve hostel issues seamlessly across all wings and blocks.
+            </p>
+          </div>
+          <Button asChild size="lg" className="rounded-xl shadow-md shadow-primary/20 transition-all duration-200 hover:shadow-lg hover:shadow-primary/30">
+            <Link to="/submit" className="gap-2 font-semibold">
+              <Plus aria-hidden="true" className="size-4.5" />
+              Submit Complaint
+            </Link>
+          </Button>
         </div>
-        <Button asChild>
-          <Link to="/submit">
-            <Plus aria-hidden="true" className="size-4" />
-            Submit Complaint
-          </Link>
-        </Button>
       </div>
 
+      {/* KPI Stats Grid */}
       <section className="mt-7" aria-label="Complaint summary">
         {isPending ? (
           <CardsLoadingState />
@@ -66,56 +80,96 @@ function DashboardPage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
-              label="Total Complaints"
+              label="Total Issues"
               value={total}
-              hint="All complaints ever submitted"
+              hint="All complaints submitted"
               icon={ClipboardList}
+              accentClassName="text-primary bg-primary/10 border-primary/20"
+              pillLabel="All time"
             />
             <StatCard
-              label="Open"
+              label="Pending Triage"
               value={open}
-              hint={`${percent(open)}% awaiting first action`}
+              hint={`${percent(open)}% awaiting inspection`}
               icon={CircleDot}
-              accentClassName="text-status-open"
+              accentClassName="text-status-open bg-status-open-bg border-status-open-border"
+              pillLabel={`${percent(open)}%`}
             />
             <StatCard
-              label="In Progress"
+              label="In Repair"
               value={inProgress}
-              hint={`${percent(inProgress)}% currently being fixed`}
-              icon={Loader}
-              accentClassName="text-status-progress"
+              hint={`${percent(inProgress)}% actively assigned`}
+              icon={Loader2}
+              accentClassName="text-status-progress bg-status-progress-bg border-status-progress-border"
+              pillLabel={`${percent(inProgress)}%`}
             />
             <StatCard
               label="Resolved"
               value={resolved}
-              hint={`${percent(resolved)}% closed successfully`}
+              hint={`${percent(resolved)}% closed satisfactorily`}
               icon={CheckCircle2}
-              accentClassName="text-status-resolved"
+              accentClassName="text-status-resolved bg-status-resolved-bg border-status-resolved-border"
+              pillLabel={`${percent(resolved)}%`}
             />
           </div>
         )}
       </section>
 
+      {/* Modern Status Progress Bar */}
       {!isPending && !isError && total > 0 ? (
         <section className="mt-6" aria-label="Status overview">
-          <div className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
-            <h2 className="text-sm font-semibold text-foreground">Status overview</h2>
-            <div className="mt-4 flex h-2.5 w-full overflow-hidden rounded-full bg-secondary">
-              <div className="bg-status-open" style={{ width: `${percent(open)}%` }} />
-              <div className="bg-status-progress" style={{ width: `${percent(inProgress)}%` }} />
-              <div className="bg-status-resolved" style={{ width: `${percent(resolved)}%` }} />
+          <div className="rounded-2xl border border-border/80 bg-card p-5.5 shadow-[var(--shadow-card)]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="size-4 text-primary" />
+                <h2 className="text-sm font-semibold tracking-tight text-foreground">
+                  Resolution Progress
+                </h2>
+              </div>
+              <span className="text-xs font-medium text-muted-foreground">
+                {resolved} of {total} Resolved ({percent(resolved)}%)
+              </span>
             </div>
+
+            {/* Glowing Segmented Progress */}
+            <div className="mt-4 flex h-3 w-full overflow-hidden rounded-full bg-secondary/80 p-0.5 shadow-inner">
+              <div
+                className="rounded-l-full bg-status-open transition-all duration-500"
+                style={{ width: `${percent(open)}%` }}
+                title={`Open: ${percent(open)}%`}
+              />
+              <div
+                className="bg-status-progress transition-all duration-500"
+                style={{ width: `${percent(inProgress)}%` }}
+                title={`In Progress: ${percent(inProgress)}%`}
+              />
+              <div
+                className="rounded-r-full bg-status-resolved transition-all duration-500"
+                style={{ width: `${percent(resolved)}%` }}
+                title={`Resolved: ${percent(resolved)}%`}
+              />
+            </div>
+
+            {/* Legend Pills */}
             <dl className="mt-4 grid gap-3 sm:grid-cols-3">
               {[
-                { label: "Open", value: open, dot: "bg-status-open" },
-                { label: "In Progress", value: inProgress, dot: "bg-status-progress" },
-                { label: "Resolved", value: resolved, dot: "bg-status-resolved" },
+                { label: "Open Issues", value: open, dot: "bg-status-open", textClass: "text-status-open" },
+                { label: "In Progress", value: inProgress, dot: "bg-status-progress", textClass: "text-status-progress" },
+                { label: "Resolved", value: resolved, dot: "bg-status-resolved", textClass: "text-status-resolved" },
               ].map((item) => (
-                <div key={item.label} className="flex items-center gap-2 text-sm">
-                  <span aria-hidden="true" className={`size-2 rounded-full ${item.dot}`} />
-                  <dt className="text-muted-foreground">{item.label}</dt>
-                  <dd className="font-medium text-foreground tabular-nums">
-                    {item.value} ({percent(item.value)}%)
+                <div
+                  key={item.label}
+                  className="flex items-center justify-between rounded-xl border border-border/50 bg-secondary/40 px-3 py-2 text-sm"
+                >
+                  <div className="flex items-center gap-2">
+                    <span aria-hidden="true" className={`size-2.5 rounded-full ${item.dot}`} />
+                    <dt className="text-xs font-medium text-muted-foreground">{item.label}</dt>
+                  </div>
+                  <dd className="font-semibold text-foreground tabular-nums text-sm">
+                    {item.value}{" "}
+                    <span className="text-xs font-normal text-muted-foreground">
+                      ({percent(item.value)}%)
+                    </span>
                   </dd>
                 </div>
               ))}
@@ -124,14 +178,19 @@ function DashboardPage() {
         </section>
       ) : null}
 
+      {/* Recent Activity Section */}
       <section className="mt-8" aria-label="Recent complaints">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-foreground">Recent Complaints</h2>
+          <div>
+            <h2 className="text-lg font-bold tracking-tight text-foreground">Recent Complaints</h2>
+            <p className="text-xs text-muted-foreground">Latest reported maintenance issues</p>
+          </div>
           <Link
             to="/complaints"
-            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+            className="group inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/10"
           >
-            View all
+            <span>View all complaints</span>
+            <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
           </Link>
         </div>
 
@@ -141,13 +200,13 @@ function DashboardPage() {
           ) : isError ? (
             <ErrorState message={(error as Error).message} onRetry={() => void refetch()} />
           ) : recent.length === 0 ? (
-            <div className="rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
+            <div className="rounded-2xl border border-border/80 bg-card p-8 shadow-[var(--shadow-card)]">
               <EmptyState
                 icon={Inbox}
                 title="No complaints yet"
                 description="When someone reports an issue in the hostel, it will show up here."
                 action={
-                  <Button asChild>
+                  <Button asChild className="rounded-xl shadow-xs">
                     <Link to="/submit">Submit the first complaint</Link>
                   </Button>
                 }
@@ -156,7 +215,7 @@ function DashboardPage() {
           ) : (
             <>
               <ComplaintTable complaints={recent} />
-              <div className="grid gap-3 lg:hidden">
+              <div className="grid gap-3 md:hidden">
                 {recent.map((complaint) => (
                   <ComplaintCard key={complaint.id} complaint={complaint} />
                 ))}
