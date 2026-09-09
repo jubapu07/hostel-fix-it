@@ -1,80 +1,87 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, MapPin } from "lucide-react";
 
-import { StatusBadge } from "@/components/complaints/StatusBadge";
 import { PriorityBadge } from "@/components/complaints/PriorityBadge";
+import { StatusBadge } from "@/components/complaints/StatusBadge";
 import { formatDate } from "@/lib/format";
 import type { Complaint } from "@/types/complaint";
 
 export function ComplaintTable({ complaints }: { complaints: Complaint[] }) {
   return (
-    <div className="hidden overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)] lg:block">
+    <div className="hidden md:block overflow-hidden rounded-2xl border border-border/80 bg-card shadow-[var(--shadow-card)]">
       <table className="w-full border-collapse text-left text-sm">
         <caption className="sr-only">List of hostel complaints</caption>
         <thead>
-          <tr className="border-b border-border bg-secondary/60">
-            <th scope="col" className="px-5 py-3 font-medium text-muted-foreground">
+          <tr className="border-b border-border/80 bg-secondary/60">
+            <th scope="col" className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Complaint
             </th>
-            <th scope="col" className="px-5 py-3 font-medium text-muted-foreground">
+            <th scope="col" className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Category
             </th>
-            <th scope="col" className="px-5 py-3 font-medium text-muted-foreground">
-              Location
-            </th>
-            <th scope="col" className="px-5 py-3 font-medium text-muted-foreground">
+            <th scope="col" className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Priority
             </th>
-            <th scope="col" className="px-5 py-3 font-medium text-muted-foreground">
+            <th scope="col" className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Location
+            </th>
+            <th scope="col" className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Status
             </th>
-            <th scope="col" className="px-5 py-3 font-medium text-muted-foreground">
+            <th scope="col" className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Submitted
             </th>
-            <th scope="col" className="px-5 py-3 text-right font-medium text-muted-foreground">
+            <th scope="col" className="px-5 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Action
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-border/60">
           {complaints.map((complaint) => (
             <tr
               key={complaint.id}
-              className="border-b border-border transition-colors last:border-0 hover:bg-secondary/50"
+              className="group transition-colors duration-150 hover:bg-secondary/40"
             >
-              <td className="max-w-[22rem] px-5 py-4">
+              <td className="max-w-[20rem] px-5 py-4">
                 <Link
                   to="/complaints/$id"
                   params={{ id: complaint.id }}
-                  className="font-medium text-foreground underline-offset-4 hover:underline"
+                  className="font-semibold text-foreground transition-colors group-hover:text-primary underline-offset-4 hover:underline"
                 >
                   {complaint.title}
                 </Link>
-                <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
                   {complaint.description}
                 </p>
               </td>
-              <td className="px-5 py-4 whitespace-nowrap text-muted-foreground">
-                {complaint.category}
+              <td className="px-5 py-4 whitespace-nowrap">
+                <span className="inline-flex rounded-lg bg-secondary/80 px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+                  {complaint.category}
+                </span>
               </td>
-              <td className="px-5 py-4 text-muted-foreground">{complaint.location}</td>
-              <td className="px-5 py-4">
+              <td className="px-5 py-4 whitespace-nowrap">
                 <PriorityBadge priority={complaint.priority} />
               </td>
-              <td className="px-5 py-4">
+              <td className="px-5 py-4 whitespace-nowrap text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1">
+                  <MapPin className="size-3 text-muted-foreground/80" />
+                  {complaint.location}
+                </span>
+              </td>
+              <td className="px-5 py-4 whitespace-nowrap">
                 <StatusBadge status={complaint.status} />
               </td>
-              <td className="px-5 py-4 whitespace-nowrap text-muted-foreground">
+              <td className="px-5 py-4 whitespace-nowrap text-xs text-muted-foreground">
                 {formatDate(complaint.created_at)}
               </td>
-              <td className="px-5 py-4 text-right">
+              <td className="px-5 py-4 text-right whitespace-nowrap">
                 <Link
                   to="/complaints/$id"
                   params={{ id: complaint.id }}
-                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                  className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-primary transition-all duration-150 hover:bg-primary/10"
                 >
-                  View
-                  <ChevronRight aria-hidden="true" className="size-3.5" />
+                  <span>View</span>
+                  <ChevronRight aria-hidden="true" className="size-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
                 </Link>
               </td>
             </tr>
