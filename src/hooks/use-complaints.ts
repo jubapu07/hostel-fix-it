@@ -14,11 +14,21 @@ export const complaintKeys = {
 };
 
 export function useComplaints() {
-  return useQuery({ queryKey: complaintKeys.all, queryFn: fetchComplaints });
+  return useQuery({
+    queryKey: complaintKeys.all,
+    queryFn: fetchComplaints,
+    staleTime: 1000 * 30,
+    retry: 1,
+  });
 }
 
 export function useComplaint(id: string) {
-  return useQuery({ queryKey: complaintKeys.detail(id), queryFn: () => fetchComplaint(id) });
+  return useQuery({
+    queryKey: complaintKeys.detail(id),
+    queryFn: () => fetchComplaint(id),
+    staleTime: 1000 * 30,
+    retry: 1,
+  });
 }
 
 export function useCreateComplaint() {
