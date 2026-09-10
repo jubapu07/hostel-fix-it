@@ -6,16 +6,16 @@ const priorityConfig: Record<
   { container: string; dot: string }
 > = {
   Low: {
-    container: "bg-palette-slate/15 text-slate-700 dark:text-slate-300 border-palette-slate/30",
-    dot: "bg-palette-slate",
+    container: "bg-slate-100/80 text-slate-700 border-slate-200 dark:bg-slate-800/50 dark:text-slate-300 dark:border-slate-700/60",
+    dot: "bg-slate-400",
   },
   Medium: {
-    container: "bg-palette-peach/15 text-amber-700 dark:text-palette-peach border-palette-peach/30",
-    dot: "bg-palette-peach",
+    container: "bg-amber-50 text-amber-700 border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60",
+    dot: "bg-amber-500",
   },
   High: {
-    container: "bg-palette-terracotta/15 text-palette-terracotta dark:text-palette-terracotta border-palette-terracotta/40",
-    dot: "bg-palette-terracotta",
+    container: "bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800/60 font-semibold",
+    dot: "bg-rose-500",
   },
 };
 
