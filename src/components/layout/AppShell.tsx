@@ -19,8 +19,8 @@ function Logo() {
       <span className="relative flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-md shadow-primary/25 transition-transform duration-200 group-hover:scale-105">
         <Building2 aria-hidden="true" className="size-5" />
         <span className="absolute -top-1 -right-1 flex size-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-palette-seafoam opacity-75" />
-          <span className="relative inline-flex size-2.5 rounded-full bg-palette-seafoam" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-palette-peach opacity-75" />
+          <span className="relative inline-flex size-2.5 rounded-full bg-palette-peach" />
         </span>
       </span>
       <div className="flex flex-col">
@@ -28,7 +28,7 @@ function Logo() {
           HostelFix
         </span>
         <span className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
-          <Sparkles className="size-3 text-amber-500" />
+          <Sparkles className="size-3 text-palette-peach" />
           Resident Portal
         </span>
       </div>
