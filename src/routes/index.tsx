@@ -48,10 +48,10 @@ function DashboardPage() {
         <div className="pointer-events-none absolute -top-12 -right-12 size-48 rounded-full bg-primary/10 blur-3xl" />
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-palette-seafoam/40 bg-palette-seafoam/15 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-palette-seafoam">
+            <div className="inline-flex items-center gap-2 rounded-full border border-palette-peach/40 bg-palette-peach/15 px-3 py-1 text-xs font-semibold text-palette-terracotta dark:text-palette-peach">
               <span className="relative flex size-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-palette-seafoam opacity-75" />
-                <span className="relative inline-flex size-2 rounded-full bg-palette-seafoam" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-palette-peach opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-palette-peach" />
               </span>
               Hostel Operations Live
             </div>
