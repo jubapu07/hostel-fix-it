@@ -12,6 +12,7 @@ import {
 
 import { ComplaintCard } from "@/components/complaints/ComplaintCard";
 import { ComplaintTable } from "@/components/complaints/ComplaintTable";
+import { ComplaintAnalytics } from "@/components/dashboard/ComplaintAnalytics";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ErrorState } from "@/components/common/ErrorState";
 import { CardsLoadingState, LoadingState } from "@/components/common/LoadingState";
@@ -208,6 +209,11 @@ function DashboardPage() {
             </dl>
           </div>
         </section>
+      ) : null}
+
+      {/* Analytics Charts */}
+      {!isPending && !isError && total > 0 ? (
+        <ComplaintAnalytics complaints={complaints} />
       ) : null}
 
       {/* Recent Complaints Section */}
