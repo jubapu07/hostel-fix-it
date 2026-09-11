@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SearchX, Plus } from "lucide-react";
+import { SearchX, Plus, Download } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { ComplaintCard } from "@/components/complaints/ComplaintCard";
 import { ComplaintTable } from "@/components/complaints/ComplaintTable";
@@ -11,6 +12,7 @@ import { LoadingState } from "@/components/common/LoadingState";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
 import { useComplaints } from "@/hooks/use-complaints";
+import { exportComplaintsToCSV } from "@/lib/export";
 
 export const Route = createFileRoute("/complaints/")({
   head: () => ({
@@ -52,6 +54,18 @@ function ComplaintsPage() {
     filters.priority !== "All" ||
     filters.sort !== "newest";
 
+  const handleExportCSV = () => {
+    const listToExport = visible.length > 0 ? visible : (complaints ?? []);
+    if (listToExport.length === 0) {
+      toast.error("No complaints available to export.");
+      return;
+    }
+    const success = exportComplaintsToCSV(listToExport);
+    if (success) {
+      toast.success(`Exported ${listToExport.length} complaint${listToExport.length === 1 ? "" : "s"} to CSV`);
+    }
+  };
+
   return (
     <AppShell>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -61,12 +75,23 @@ function ComplaintsPage() {
             View, search and manage hostel complaints.
           </p>
         </div>
-        <Button asChild>
-          <Link to="/submit">
-            <Plus aria-hidden="true" className="size-4" />
-            Submit Complaint
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={handleExportCSV}
+            disabled={!complaints || complaints.length === 0}
+            className="gap-2"
+          >
+            <Download aria-hidden="true" className="size-4" />
+            Export CSV
+          </Button>
+          <Button asChild>
+            <Link to="/submit">
+              <Plus aria-hidden="true" className="size-4" />
+              Submit Complaint
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="mt-6">
